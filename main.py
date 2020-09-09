@@ -59,18 +59,31 @@ def select_dates(first_date, second_date):
                                                      "[@_ngcontent-ryanair-homepage-c85='']"
                                                      "[@tabindex='0']")
 
-                                                     )))[first_date].click()
+                                                     )))[first_date]
+    date_1_text = date_1.text
     date_1.click()
+    date_3 = WebDriverWait(driver, 20). \
+        until(EC.visibility_of_all_elements_located((By.XPATH,
+                                                     ("//div[@class='calendar__month-name']"
+                                                      "[@_ngcontent-ryanair-homepage-c84='']"
+                                                      ))))
+    month_1_text = date_3[0].text
+    month_2_text = date_3[1].text
     date_2 = WebDriverWait(driver, 20). \
         until(EC.visibility_of_all_elements_located((By.XPATH,
                                                      ("//div[@class='calendar-body__cell']"
                                                       "[@_ngcontent-ryanair-homepage-c85='']"
                                                       "[@tabindex='0']")
 
-                                                     )))[second_date].click()
+                                                     )))[second_date]
+    date_2_text = date_2.text
     date_2.click()
 
-    print('The flight is from ', date_1.text, 'to ', date_2.text)
+
+    if int(date_1_text) < int(date_2_text):
+        print('The flight is from', date_1_text,'to', date_2_text, 'of', month_1_text)
+    else:
+        print('The flight is from', date_1_text, 'of', month_1_text, 'to', date_2_text, 'of', month_2_text)
 
 
 def process_data():
