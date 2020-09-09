@@ -47,19 +47,33 @@ def select_origin_or_destiny(from_or_to, country, city):
             airports.click()
             break
 
+def select_dates(first_date, second_date):
+    choose_date_buttons = driver.find_elements_by_xpath("//div[@class='input-button__input ng-star-inserted']")
+    choose_date_buttons[0].click()
+    dates = WebDriverWait(driver, 20). \
+        until(EC.visibility_of_all_elements_located((By.XPATH,
+                                                     "//div[@class='calender-body__cell']"
+                                                     )))
+    for date in dates:
+        print(date.text)
 
-def process_data(driver):
+    dates[first_date].click()
+    dates[second_date].click()
+    print('The flight is from ', dates[first_date].text, 'to ', dates[second_date].text)
+
+
+def process_data():
     select_origin_or_destiny('departure','Portugal','Porto')
     select_origin_or_destiny('destination','Poland','Krakow')
-
+    select_dates(1, 2)
 
     input()
     driver.quit()
 
 
 def main():
-    driver = get_driver()
-    process_data(driver)
+    get_driver()
+    process_data()
 
 
 if __name__ == "__main__":
