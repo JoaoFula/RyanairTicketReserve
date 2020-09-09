@@ -53,23 +53,24 @@ def select_dates(first_date, second_date):
 
     #wrappers = driver.find_elements_by_xpath("//calender[@class = '']")
 
-    WebDriverWait(driver, 20). \
+    date_1 = WebDriverWait(driver, 20). \
         until(EC.visibility_of_all_elements_located((By.XPATH,
                                                      ("//div[@class='calendar-body__cell']"
                                                      "[@_ngcontent-ryanair-homepage-c85='']"
                                                      "[@tabindex='0']")
 
                                                      )))[first_date].click()
-    WebDriverWait(driver, 20). \
+    date_1.click()
+    date_2 = WebDriverWait(driver, 20). \
         until(EC.visibility_of_all_elements_located((By.XPATH,
                                                      ("//div[@class='calendar-body__cell']"
                                                       "[@_ngcontent-ryanair-homepage-c85='']"
                                                       "[@tabindex='0']")
 
                                                      )))[second_date].click()
+    date_2.click()
 
-
-    #print('The flight is from ', dates[first_date].text, 'to ', dates[second_date].text)
+    print('The flight is from ', date_1.text, 'to ', date_2.text)
 
 
 def process_data():

@@ -589,3 +589,5 @@ JavaScript error: resource://gre/modules/TelemetryUtils.jsm, line 159: TypeError
 1599671091181	Marionette	INFO	Listening on port 43497
 1599671091966	Marionette	WARN	TLS certificate errors will be ignored for this session
 1599671176451	Marionette	INFO	Stopped listening on port 43497
+1599671231463	Marionette	INFO	Stopped listening on port 46209
+1599671235730	Marionette	INFO	Stopped listening on port 39701
