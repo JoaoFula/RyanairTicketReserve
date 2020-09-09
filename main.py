@@ -50,16 +50,26 @@ def select_origin_or_destiny(from_or_to, country, city):
 def select_dates(first_date, second_date):
     choose_date_buttons = driver.find_elements_by_xpath("//div[@class='input-button__input ng-star-inserted']")
     choose_date_buttons[0].click()
-    dates = WebDriverWait(driver, 20). \
-        until(EC.visibility_of_all_elements_located((By.XPATH,
-                                                     "//div[@class='calender-body__cell']"
-                                                     )))
-    for date in dates:
-        print(date.text)
 
-    dates[first_date].click()
-    dates[second_date].click()
-    print('The flight is from ', dates[first_date].text, 'to ', dates[second_date].text)
+    #wrappers = driver.find_elements_by_xpath("//calender[@class = '']")
+
+    WebDriverWait(driver, 20). \
+        until(EC.visibility_of_all_elements_located((By.XPATH,
+                                                     ("//div[@class='calendar-body__cell']"
+                                                     "[@_ngcontent-ryanair-homepage-c85='']"
+                                                     "[@tabindex='0']")
+
+                                                     )))[first_date].click()
+    WebDriverWait(driver, 20). \
+        until(EC.visibility_of_all_elements_located((By.XPATH,
+                                                     ("//div[@class='calendar-body__cell']"
+                                                      "[@_ngcontent-ryanair-homepage-c85='']"
+                                                      "[@tabindex='0']")
+
+                                                     )))[second_date].click()
+
+
+    #print('The flight is from ', dates[first_date].text, 'to ', dates[second_date].text)
 
 
 def process_data():
