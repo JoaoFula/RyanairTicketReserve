@@ -159,9 +159,9 @@ def process_data_second_page():
             until(EC.visibility_of_all_elements_located((By.XPATH,
                                                          "//span[@class='fare-card__button-text ng-star-inserted']"
                                                          )))[0].click()
-    cost = driver.find_element_by_xpath("//span[@class='price-value h2 text-700 price-value--selected']").text
-
-    print('Total cost is', cost)
+    #cost = driver.find_element_by_xpath("//span[@class='price-value h2 text-700 price-value--selected']").text
+    cost = driver.find_element_by_xpath("//ry-price[@class='ng-tns-c19-1 price ng-star-inserted']").text
+    print('Total cost is '+ cost)
     input('Do you wish to proceed?')
 
     driver.find_element_by_xpath("//button[@class='ry-button--full login-touchpoint__login-button ry-button--gradient-blue ry-button--medium']").click()
@@ -169,11 +169,19 @@ def process_data_second_page():
 def login():
     EMAIL = config('EMAIL')
     PASSWORD = config('PASSWORD')
-    email_text_box = WebDriverWait(driver, 20). \
-        until(EC.visibility_of_all_elements_located((By.XPATH,"//input[@name='email']")))[0]
-    email_text_box.click()
+    text_boxes = WebDriverWait(driver, 20). \
+        until(EC.visibility_of_all_elements_located((By.XPATH,"//input[@name='email']")))
+
+
+    text_boxes[0].click()
     actions = ActionChains(driver)
-    actions.move_to_element(email_text_box).send_keys(EMAIL).perform()
+    actions.move_to_element(text_boxes[0]).send_keys(EMAIL).perform()
+    text_box = driver.find_element_by_xpath("//input[@name='password']")
+    text_box.click()
+    actions = ActionChains(driver)
+    actions.move_to_element(text_box).send_keys(PASSWORD).perform()
+    driver.find_element_by_xpath("//button[@class='auth-submit__button ry-button--full ry-button--flat-yellow']").click()
+
 
 def main():
     get_driver()
