@@ -6,6 +6,7 @@ from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.common.action_chains import ActionChains
+from decouple import config
 
 
 try:
@@ -161,14 +162,29 @@ def process_data_second_page():
     cost = driver.find_element_by_xpath("//span[@class='price-value h2 text-700 price-value--selected']").text
 
     print('Total cost is', cost)
+    input('Do you wish to proceed?')
+
+    driver.find_element_by_xpath("//button[@class='ry-button--full login-touchpoint__login-button ry-button--gradient-blue ry-button--medium']").click()
+
+def login():
+    EMAIL = config('EMAIL')
+    PASSWORD = config('PASSWORD')
+    email_text_box = WebDriverWait(driver, 20). \
+        until(EC.visibility_of_all_elements_located((By.XPATH,"//input[@name='email']")))[0]
+    email_text_box.click()
+    actions = ActionChains(driver)
+    actions.move_to_element(email_text_box).send_keys(EMAIL).perform()
 
 def main():
     get_driver()
     process_data_first_page()
     process_data_second_page()
+    login()
 
     input()
     driver.quit()
 
 if __name__ == "__main__":
     main()
+
+
