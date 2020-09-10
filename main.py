@@ -36,11 +36,22 @@ def select_origin_or_destiny(from_or_to, country, city):
             airports.click()
             break
 
-    # Find all origin cities within the origin country
+    if from_or_to == 'departure':
+        # Find all origin cities within the origin country
+        from_airports = WebDriverWait(driver, 20). \
+            until(EC.visibility_of_all_elements_located((By.XPATH,
+                                                         "//span[@class='b2 airport-item']"
+
+                                                         )), message='Something is wrong with the request or'
+                                                                     'cannot fly from '+ city)
+
     from_airports = WebDriverWait(driver, 20). \
         until(EC.visibility_of_all_elements_located((By.XPATH,
-                                                     "//span[@class='b2 airport-item']"
-                                                     )))
+                                                     "//span[@class='b2 airport-item']",
+
+                                                     )), message='Something is wrong with the request or'
+                                                                     'cannot fly to '+ city)
+
     # Locate origin city from the airport list and click the origin city button
     for airports in from_airports:
         if airports.text == city:
@@ -85,11 +96,46 @@ def select_dates(first_date, second_date):
     else:
         print('The flight is from', date_1_text, 'of', month_1_text, 'to', date_2_text, 'of', month_2_text)
 
+def number_of_people(adults, teens, children, infants):
+    # close the subscribe button
+    driver.find_element_by_xpath("//button[@class='subscriber-widget__close-button']").click()
+    # reopen passenger selection
+    passengers_button = driver.find_elements_by_xpath("//fsw-input-button[@class='flight-widget-controls__control flight-widget-controls__control--passengers']"
+                                                      "[@_ngcontent-ryanair-homepage-c29='']"
+                                                      "[@container='body']"
+                                                      "[@uniqueid='passengers']")
+    passengers_button[0].click()
+
+
+
+
+    buttons = WebDriverWait(driver, 20). \
+        until(EC.visibility_of_all_elements_located((By.XPATH,
+                                                     "//div[@class='counter__button-wrapper--enabled']"
+                                                     )))
+
+    for i in range(adults):
+        buttons[0].click()
+    for i in range(teens):
+        buttons[1].click()
+    for i in range(children):
+        buttons[2].click()
+    for i in range(infants):
+        buttons[3].click()
+
+    driver.find_element_by_xpath("//button[@class='passengers__confirm-button ry-button--anchor-blue ry-button--anchor']"
+                                  "[@aria-label='Done']").click()
+
+
 
 def process_data():
+    # select_origin_or_destiny(type, country, city)
     select_origin_or_destiny('departure','Portugal','Porto')
     select_origin_or_destiny('destination','Poland','Krakow')
-    select_dates(1, 2)
+    select_dates(1, 1)
+    # number_of_people(adults, teens, children, infants)
+    number_of_people(1,0,0,0)
+
 
     input()
     driver.quit()
