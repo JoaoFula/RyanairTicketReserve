@@ -158,7 +158,9 @@ def process_data_second_page():
             until(EC.visibility_of_all_elements_located((By.XPATH,
                                                          "//span[@class='fare-card__button-text ng-star-inserted']"
                                                          )))[0].click()
-    
+    cost = driver.find_element_by_xpath("//span[@class='price-value h2 text-700 price-value--selected']").text
+
+    print('Total cost is', cost)
 
 def main():
     get_driver()
