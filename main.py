@@ -114,7 +114,7 @@ def number_of_people(adults, teens, children, infants):
                                                      "//div[@class='counter__button-wrapper--enabled']"
                                                      )))
 
-    for i in range(adults):
+    for i in range(adults)-1:
         buttons[0].click()
     for i in range(teens):
         buttons[1].click()
