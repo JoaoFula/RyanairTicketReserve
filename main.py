@@ -5,7 +5,8 @@ from selenium import webdriver
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support import expected_conditions as EC
-import time
+from selenium.webdriver.common.action_chains import ActionChains
+
 
 try:
     driver=webdriver.Firefox()
@@ -114,7 +115,7 @@ def number_of_people(adults, teens, children, infants):
                                                      "//div[@class='counter__button-wrapper--enabled']"
                                                      )))
 
-    for i in range(adults)-1:
+    for i in range(adults-1):
         buttons[0].click()
     for i in range(teens):
         buttons[1].click()
@@ -126,25 +127,46 @@ def number_of_people(adults, teens, children, infants):
     driver.find_element_by_xpath("//button[@class='passengers__confirm-button ry-button--anchor-blue ry-button--anchor']"
                                   "[@aria-label='Done']").click()
 
+def click_checkbox_and_search():
+    driver.find_element_by_xpath("//ry-checkbox"
+                                 "[@data-ref='terms-of-use__terms-checkbox']").click()
 
+    driver.find_element_by_xpath("//button[@class='flight-search-widget__start-search ry-button--gradient-yellow ng-trigger ng-trigger-collapseExpandCta']"
+                                 "[@aria-label='Search']").click()
 
-def process_data():
+def process_data_first_page():
     # select_origin_or_destiny(type, country, city)
     select_origin_or_destiny('departure','Portugal','Porto')
     select_origin_or_destiny('destination','Poland','Krakow')
     select_dates(1, 1)
     # number_of_people(adults, teens, children, infants)
     number_of_people(1,0,0,0)
+    click_checkbox_and_search()
 
+def process_data_second_page():
+    driver.find_element_by_xpath("//div[@class='cookie-popup__close']").click()
+    actions = ActionChains(driver)
 
-    input()
-    driver.quit()
+    for i in range(2):
+        element = WebDriverWait(driver, 20). \
+            until(EC.visibility_of_all_elements_located((By.XPATH,"//div[@class='card-header b2']")))
 
+        actions.move_to_element(element[i]).perform()
+
+        element[i].click()
+        WebDriverWait(driver, 20). \
+            until(EC.visibility_of_all_elements_located((By.XPATH,
+                                                         "//span[@class='fare-card__button-text ng-star-inserted']"
+                                                         )))[0].click()
+    
 
 def main():
     get_driver()
-    process_data()
+    process_data_first_page()
+    process_data_second_page()
 
+    input()
+    driver.quit()
 
 if __name__ == "__main__":
     main()
