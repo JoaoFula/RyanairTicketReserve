@@ -7,6 +7,7 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.common.action_chains import ActionChains
 from decouple import config
+import time
 
 
 try:
@@ -68,27 +69,17 @@ def select_dates(first_date, second_date):
 
     date_1 = WebDriverWait(driver, 20). \
         until(EC.visibility_of_all_elements_located((By.XPATH,
-                                                     ("//div[@class='calendar-body__cell']"
-                                                     "[@_ngcontent-ryanair-homepage-c85='']"
-                                                     "[@tabindex='0']")
-
-                                                     )))[first_date]
+                                                     "//div[@class='calendar-body__cell']")))[first_date]
     date_1_text = date_1.text
     date_1.click()
     date_3 = WebDriverWait(driver, 20). \
         until(EC.visibility_of_all_elements_located((By.XPATH,
-                                                     ("//div[@class='calendar__month-name']"
-                                                      "[@_ngcontent-ryanair-homepage-c84='']"
-                                                      ))))
+                                                     "//div[@class='calendar__month-name']")))
     month_1_text = date_3[0].text
     month_2_text = date_3[1].text
     date_2 = WebDriverWait(driver, 20). \
         until(EC.visibility_of_all_elements_located((By.XPATH,
-                                                     ("//div[@class='calendar-body__cell']"
-                                                      "[@_ngcontent-ryanair-homepage-c85='']"
-                                                      "[@tabindex='0']")
-
-                                                     )))[second_date]
+                                                     "//div[@class='calendar-body__cell']")))[second_date]
     date_2_text = date_2.text
     date_2.click()
 
@@ -144,6 +135,8 @@ def process_data_first_page():
     number_of_people(1,0,0,0)
     click_checkbox_and_search()
 
+
+
 def process_data_second_page():
     driver.find_element_by_xpath("//div[@class='cookie-popup__close']").click()
     actions = ActionChains(driver)
@@ -181,13 +174,66 @@ def login():
     actions = ActionChains(driver)
     actions.move_to_element(text_box).send_keys(PASSWORD).perform()
     driver.find_element_by_xpath("//button[@class='auth-submit__button ry-button--full ry-button--flat-yellow']").click()
+    time.sleep(1) #wait for login prompt to close
 
+def personal_information_data():
+    TITLE = config('TITLE')
+    NAME = config('NAME')
+    SURNAME = config('SURNAME')
+    WebDriverWait(driver, 20). \
+        until(EC.visibility_of_all_elements_located((By.XPATH,"//button[@class='dropdown__toggle b2']")))[0].click()
+    titles = WebDriverWait(driver, 20). \
+        until(EC.visibility_of_all_elements_located((By.XPATH,"//button[@class='dropdown-item__link dropdown-item__link--highlighted']")))
+    for title in titles:
+        if title.text == TITLE:
+            title.click()
+    name_box = driver.find_element_by_xpath("//input[@id='formState.passengers.ADT-0.name']")
+    name_box.click()
+    actions = ActionChains(driver)
+    actions.move_to_element(name_box).send_keys(NAME).perform()
+    surname_box = driver.find_element_by_xpath("//input[@id='formState.passengers.ADT-0.surname']")
+    surname_box.click()
+    actions = ActionChains(driver) ## Necessary, resets the keys currently within the driver
+    actions.move_to_element(surname_box).send_keys(SURNAME).perform()
+    driver.find_element_by_xpath("//button[@class='continue-flow__button ry-button--gradient-yellow']").click()
+
+def scroll_shim(passed_in_driver, object):
+    x = object.location['x']
+    y = object.location['y']
+    print(x)
+    print(y)
+    scroll_by_coord = 'window.scrollTo(%s,%s);' % (
+        x,
+        y
+    )
+    scroll_nav_out_of_way = 'window.scrollBy(0, -120);'
+    passed_in_driver.execute_script(scroll_by_coord)
+    passed_in_driver.execute_script(scroll_nav_out_of_way)
+
+def choose_seat():
+    seat_options = WebDriverWait(driver, 20). \
+        until(EC.visibility_of_all_elements_located((By.XPATH, "//button[@class='seats-v2-navigation__button h4 ng-tns-c149-1']")))
+
+    for seat in seat_options:
+        if seat.text == "Option 2: Random seat allocation":
+            seat.click()
+
+    element = driver.find_element_by_xpath( "//button[@class='random-allocation-info__actions__button b2 ry-button--gradient-yellow']")
+    if 'firefox' in driver.capabilities['browserName']:
+        scroll_shim(driver, element)
+    actions = ActionChains(driver)
+    actions.move_to_element(element)
+
+    actions.perform()
+    element.click()
 
 def main():
     get_driver()
     process_data_first_page()
     process_data_second_page()
     login()
+    personal_information_data()
+    choose_seat()
 
     input()
     driver.quit()
