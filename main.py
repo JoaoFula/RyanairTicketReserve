@@ -8,7 +8,7 @@ from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.common.action_chains import ActionChains
 from decouple import config
 import time
-
+import sys
 
 try:
     driver=webdriver.Firefox()
@@ -91,12 +91,13 @@ def select_dates(first_date, second_date):
 
 def number_of_people(adults, teens, children, infants):
     # close the subscribe button
-    driver.find_element_by_xpath("//button[@class='subscriber-widget__close-button']").click()
+    # driver.find_element_by_xpath("//button[@class='subscriber-widget__close-button']").click()
     # reopen passenger selection
-    passengers_button = driver.find_elements_by_xpath("//fsw-input-button[@class='flight-widget-controls__control flight-widget-controls__control--passengers']"
-                                                      "[@_ngcontent-ryanair-homepage-c29='']"
+    passengers_button = driver.find_elements_by_xpath("//fsw-input-button[@class='flight-widget-controls__control flight-widget-controls__control--passengers ng-tns-c80-4']"
+                                                      "[@_ngcontent-ryanair-homepage-c80='']"
                                                       "[@container='body']"
                                                       "[@uniqueid='passengers']")
+
     passengers_button[0].click()
 
 
@@ -123,11 +124,17 @@ def click_checkbox_and_search():
     driver.find_element_by_xpath("//ry-checkbox"
                                  "[@data-ref='terms-of-use__terms-checkbox']").click()
 
-    driver.find_element_by_xpath("//button[@class='flight-search-widget__start-search ry-button--gradient-yellow ng-trigger ng-trigger-collapseExpandCta']"
+    driver.find_element_by_xpath("//button[@class='flight-search-widget__start-search ng-tns-c81-3 ry-button--gradient-yellow']"
                                  "[@aria-label='Search']").click()
 
 def process_data_first_page():
     # select_origin_or_destiny(type, country, city)
+    buttons = WebDriverWait(driver, 20). \
+        until(EC.visibility_of_all_elements_located((By.XPATH,
+                                                     "//button[@class='cookie-popup-with-overlay__button']"
+                                                     "[@data-ref='cookie.accept-all']"
+                                                     )))
+    buttons[0].click()
     select_origin_or_destiny('departure','Portugal','Porto')
     select_origin_or_destiny('destination','Poland','Krakow')
     select_dates(1, 1)
@@ -138,26 +145,32 @@ def process_data_first_page():
 
 
 def process_data_second_page():
-    driver.find_element_by_xpath("//div[@class='cookie-popup__close']").click()
-    actions = ActionChains(driver)
+    #driver.find_element_by_xpath("//div[@class='cookie-popup__close']").click()
+    #actions = ActionChains(driver)
+    element = WebDriverWait(driver, 20). \
+        until(EC.visibility_of_all_elements_located((By.XPATH, "//div[contains(@class, 'card-header')]")))
+    for i in range(len(element)):
+        #  until(EC.visibility_of_all_elements_located((By.XPATH,"//div[@class='card-header b2 ng-tns-c124-15']")))
 
-    for i in range(2):
-        element = WebDriverWait(driver, 20). \
-            until(EC.visibility_of_all_elements_located((By.XPATH,"//div[@class='card-header b2']")))
-
-        actions.move_to_element(element[i]).perform()
+        #actions.move_to_element(element[i]).perform()
 
         element[i].click()
-        WebDriverWait(driver, 20). \
-            until(EC.visibility_of_all_elements_located((By.XPATH,
-                                                         "//span[@class='fare-card__button-text ng-star-inserted']"
-                                                         )))[0].click()
+  #      WebDriverWait(driver, 20). \
+  #          until(EC.visibility_of_all_elements_located((By.XPATH,
+   #                                                      "//span[@class='fare-card__button-text ng-star-inserted']"
+    #                                                     )))[0].click()
     #cost = driver.find_element_by_xpath("//span[@class='price-value h2 text-700 price-value--selected']").text
-    cost = driver.find_element_by_xpath("//ry-price[@class='ng-tns-c19-1 price ng-star-inserted']").text
+    cost = driver.find_element_by_xpath("//ry-price[contains(@class,'price')]").text
     print('Total cost is '+ cost)
-    input('Do you wish to proceed?')
+    imp = input('Do you wish to proceed? (Y or N)')
+    if imp == 'N':
+        driver.quit()
+        sys.exit("Exit requested by user")
 
-    driver.find_element_by_xpath("//button[@class='ry-button--full login-touchpoint__login-button ry-button--gradient-blue ry-button--medium']").click()
+    driver.find_element_by_xpath("//button[contains(@class,'fare-card__button')]").click()
+
+    WebDriverWait(driver, 20). \
+        until(EC.visibility_of_element_located((By.XPATH, "//button[contains(@class,'ry-button--full login-touchpoint__login-button')]"))).click()
 
 def login():
     EMAIL = config('EMAIL')
@@ -195,7 +208,7 @@ def personal_information_data():
     surname_box.click()
     actions = ActionChains(driver) ## Necessary, resets the keys currently within the driver
     actions.move_to_element(surname_box).send_keys(SURNAME).perform()
-    driver.find_element_by_xpath("//button[@class='continue-flow__button ry-button--gradient-yellow']").click()
+    driver.find_element_by_xpath("//button[contains(@class,'continue-flow__button')]").click()
 
 def scroll_shim(passed_in_driver, object):
     x = object.location['x']
