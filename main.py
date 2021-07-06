@@ -6,15 +6,39 @@ from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.common.action_chains import ActionChains
+from selenium.webdriver.chrome.options import Options
 from decouple import config
 import time
 import sys
 
+def set_chrome_options() -> None:
+
+    """Sets chrome options for Selenium.
+
+    Chrome options for headless browser is enabled.
+
+    """
+
+    chrome_options = Options()
+
+    chrome_options.add_argument("--headless")
+
+    chrome_options.add_argument("--no-sandbox")
+
+    chrome_options.add_argument("--disable-dev-shm-usage")
+
+    chrome_prefs = {}
+
+    chrome_options.experimental_options["prefs"] = chrome_prefs
+
+    chrome_prefs["profile.default_content_settings"] = {"images": 2}
+
+    return chrome_options
+
 try:
-    driver=webdriver.Firefox()
+    driver = webdriver.Chrome(executable_path='/usr/local/bin/chromedriver', options=chrome_options) #options=chrome_options
 except:
-    path = input('geckodriver is not in your path, please type the path to the geckodriver executable: ')
-    driver = webdriver.Firefox(executable_path=path)
+    sys.exit('Could not find chromedriver')
 
 
 def get_driver():
