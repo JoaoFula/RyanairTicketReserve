@@ -29,11 +29,10 @@ chrome_prefs = {}
 chrome_options.experimental_options["prefs"] = chrome_prefs
 
 chrome_prefs["profile.default_content_settings"] = {"images": 2}
-
-    
+SELENIUM_URI = config('REMOTE_SELENIUM')
 
 try:
-    driver = webdriver.Remote("http://127.0.0.1:4444/wd/hub", options=chrome_options) 
+    driver = webdriver.Remote("http://"+SELENIUM_URI+"/wd/hub", options=chrome_options) 
 except:
     sys.exit('Could not find chromedriver')
 
@@ -183,8 +182,11 @@ def process_data_second_page():
     #                                                     )))[0].click()
     #cost = driver.find_element_by_xpath("//span[@class='price-value h2 text-700 price-value--selected']").text
     cost = driver.find_element_by_xpath("//ry-price[contains(@class,'price')]").text
+
     print('Total cost is '+ cost)
+
     imp = input('Do you wish to proceed? (Y or N)')
+    
     if imp == 'N':
         driver.quit()
         sys.exit("Exit requested by user")
