@@ -28,7 +28,7 @@ RUN unzip /tmp/chromedriver.zip chromedriver -d /usr/local/bin/chromedriver
 
 # Set display port as an environment variable
 
-ENV DISPLAY=:99
+ENV DISPLAY=:4444
 
 #settup to run python app
 COPY . /RYANAIRTICKETRESERVE

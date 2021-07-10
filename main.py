@@ -7,41 +7,40 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.common.action_chains import ActionChains
 from selenium.webdriver.chrome.options import Options
+from selenium.webdriver.common.desired_capabilities import DesiredCapabilities
 from decouple import config
 import time
 import sys
 
-def set_chrome_options() -> None:
 
-    """Sets chrome options for Selenium.
 
-    Chrome options for headless browser is enabled.
+"""Sets chrome options for Selenium.
+Chrome options for headless browser is enabled.
+"""
 
-    """
+chrome_options = Options()
+chrome_options.add_argument("--no-sandbox")
+chrome_options.add_argument("--headless")
+chrome_options.add_argument("--window-size=1420,1080")
+chrome_options.add_argument("--disable-gpu")
+chrome_options.add_argument('--disable-dev-shm-usage')  
 
-    chrome_options = Options()
+chrome_prefs = {}
 
-    chrome_options.add_argument("--headless")
+chrome_options.experimental_options["prefs"] = chrome_prefs
 
-    chrome_options.add_argument("--no-sandbox")
+chrome_prefs["profile.default_content_settings"] = {"images": 2}
 
-    chrome_options.add_argument("--disable-dev-shm-usage")
-
-    chrome_prefs = {}
-
-    chrome_options.experimental_options["prefs"] = chrome_prefs
-
-    chrome_prefs["profile.default_content_settings"] = {"images": 2}
-
-    return chrome_options
+    
 
 try:
-    driver = webdriver.Chrome(executable_path='/usr/local/bin/chromedriver', options=chrome_options) #options=chrome_options
+    driver = webdriver.Remote("http://127.0.0.1:4444/wd/hub", options=chrome_options) #executable_path='/usr/local/bin/chromedriver', options=chrome_options
 except:
     sys.exit('Could not find chromedriver')
 
 
 def get_driver():
+    
     url = "https://www.ryanair.com/gb/en"
     driver.get(url)
     return driver
