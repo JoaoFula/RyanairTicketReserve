@@ -7,7 +7,6 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.common.action_chains import ActionChains
 from selenium.webdriver.chrome.options import Options
-from selenium.webdriver.common.desired_capabilities import DesiredCapabilities
 from decouple import config
 import time
 import sys
@@ -34,7 +33,7 @@ chrome_prefs["profile.default_content_settings"] = {"images": 2}
     
 
 try:
-    driver = webdriver.Remote("http://127.0.0.1:4444/wd/hub", options=chrome_options) #executable_path='/usr/local/bin/chromedriver', options=chrome_options
+    driver = webdriver.Remote("http://127.0.0.1:4444/wd/hub", options=chrome_options) 
 except:
     sys.exit('Could not find chromedriver')
 
@@ -85,7 +84,7 @@ def select_origin_or_destiny(from_or_to, country, city):
             break
 
 def select_dates(first_date, second_date):
-    choose_date_buttons = driver.find_elements_by_xpath("//div[@class='input-button__input ng-star-inserted']")
+    choose_date_buttons = driver.find_elements_by_xpath("//div[contains(@class, 'input-button__input')]")
     choose_date_buttons[0].click()
 
     #wrappers = driver.find_elements_by_xpath("//calender[@class = '']")
