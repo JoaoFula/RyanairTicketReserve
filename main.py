@@ -24,17 +24,19 @@ chrome_options.add_argument("--window-size=1420,1080")
 chrome_options.add_argument("--disable-gpu")
 chrome_options.add_argument('--disable-dev-shm-usage')  
 
-chrome_prefs = {}
-
-chrome_options.experimental_options["prefs"] = chrome_prefs
-
-chrome_prefs["profile.default_content_settings"] = {"images": 2}
 SELENIUM_URI = config('REMOTE_SELENIUM')
+driver=None
+i=0
+while not driver:
+    if i == 10:
+        sys.exit("Could not find chromedriver")
+    try:
+        driver = webdriver.Remote("http://"+SELENIUM_URI+"/wd/hub", options=chrome_options) 
+    except:
+        time.sleep(2)
+        i=i+1
+    
 
-try:
-    driver = webdriver.Remote("http://"+SELENIUM_URI+"/wd/hub", options=chrome_options) 
-except:
-    sys.exit('Could not find chromedriver')
 
 
 def get_driver():
@@ -83,7 +85,7 @@ def select_origin_or_destiny(from_or_to, country, city):
             break
 
 def select_dates(first_date, second_date):
-    choose_date_buttons = driver.find_elements_by_xpath("//div[contains(@class, 'input-button__input')]")
+    choose_date_buttons = driver.find_elements_by_xpath("//fsw-input-button[contains(@class, 'flight-widget-controls__control')]")
     choose_date_buttons[0].click()
 
     #wrappers = driver.find_elements_by_xpath("//calender[@class = '']")
